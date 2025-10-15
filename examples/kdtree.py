@@ -13,3 +13,4 @@ for _ in range(5):
 
 for cluster in tree.sort():
     print(cluster)
+    print(cluster.data)
