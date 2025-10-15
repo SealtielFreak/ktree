@@ -7,9 +7,12 @@
 
 ## Description
 
-This project provides a hierarchical spatial planning structure, which can be used as
-a [QuadTree](https://en.wikipedia.org/wiki/Quadtree) or an [Octree](https://en.wikipedia.org/wiki/Octree) (including
-configuring with a one-dimension or multiple dimensions).
+This package provides several hierarchical grouping structures, including:
+ 
+- [KDTree](https://en.wikipedia.org/wiki/K-d_tree).
+- NTree (Applicable as [QuadTree](https://en.wikipedia.org/wiki/Quadtree) or [Octree](https://en.wikipedia.org/wiki/Octree))
+
+Configurable for multiple dimensions and easy implementation in projects.
 
 ## Install
 
