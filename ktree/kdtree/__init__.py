@@ -40,11 +40,12 @@ class KDCluster(ClusterInterface, typing.Generic[SupportNumber]):
         return iter(self.__data)
 
     def __repr__(self):
-        return f"Cluster(axis={self.axis}, level={self.level})"
+        return f"Cluster(axis={self.axis}, size={len(self)})"
 
 
 class KDTree(TreeContainerInterface, typing.Generic[SupportNumber]):
-    def __init__(self, axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]]):
+    def __init__(self, axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]], min_size: int):
+        self.__min_size = min_size
         self.__n_axis = len(axis[0])
         self.__axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]] = axis
         self.__items: typing.Deque[typing.List[SupportNumber]] = collections.deque()
@@ -54,11 +55,9 @@ class KDTree(TreeContainerInterface, typing.Generic[SupportNumber]):
         self.__items.append(data)
 
     def sort(self):
-        def recursive_sorting(data, axis, n, clusters, level=0):
-            if len(data) <= 1:
-                return clusters.append(KDCluster(level, axis, data))
-
-            clusters.append(KDCluster(level, axis, data))
+        def recursive_sorting(data, axis, n, level=0):
+            if len(data) <= self.__min_size:
+                return self.__clusters.append(KDCluster(level, axis, data))
 
             mid = middledist(axis[0])
             left, right = [], []
@@ -71,25 +70,25 @@ class KDTree(TreeContainerInterface, typing.Generic[SupportNumber]):
 
             n = (n + 1) % len(data[0])
 
-            if len(data) <= 3 and (len(right) == len(data) or len(left) == len(data)):
-                return clusters.append(KDCluster(level, axis, data))
+            if len(data) <= self.__min_size and (len(right) == len(data) or len(left) == len(data)):
+                return self.__clusters.append(KDCluster(level, axis, data))
 
             l_axis, r_axis = middleaxis(axis[0])
             level += 1
 
             if len(right) == 0:
-                return recursive_sorting(left, [*axis[1:], l_axis], n, clusters, level)
+                return recursive_sorting(left, [*axis[1:], l_axis], n, level)
             elif len(left) == 0:
-                return recursive_sorting(right, [*axis[1:], r_axis], n, clusters, level)
+                return recursive_sorting(right, [*axis[1:], r_axis], n, level)
             else:
                 return (
-                    recursive_sorting(left, [*axis[1:], l_axis], n, clusters, level),
-                    recursive_sorting(right, [*axis[1:], r_axis], n, clusters, level)
+                    recursive_sorting(left, [*axis[1:], l_axis], n, level),
+                    recursive_sorting(right, [*axis[1:], r_axis], n, level)
                 )
 
         self.__clusters = []
 
-        recursive_sorting(self.__items, self.__axis, 0, self.__clusters)
+        recursive_sorting(self.__items, self.__axis, 0)
 
         return self.__clusters
 
