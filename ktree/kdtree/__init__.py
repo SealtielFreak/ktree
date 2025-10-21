@@ -56,11 +56,12 @@ class KDTree(TreeContainerInterface, typing.Generic[SupportNumber]):
 
     def sort(self):
         def recursive_sorting(data, axis, n, level=0):
-            if len(data) <= self.__min_size:
+            if len(data) <= self.__min_size and n >= self.__n_axis:
                 return self.__clusters.append(KDCluster(level, axis, data))
 
             mid = middledist(axis[0])
             left, right = [], []
+
 
             for p in data:
                 if p[n] < mid:
@@ -70,7 +71,7 @@ class KDTree(TreeContainerInterface, typing.Generic[SupportNumber]):
 
             n = (n + 1) % len(data[0])
 
-            if len(data) <= self.__min_size and (len(right) == len(data) or len(left) == len(data)):
+            if len(data) <= self.__min_size and (len(right) == len(data) or len(left) == len(data)) and n >= self.__n_axis:
                 return self.__clusters.append(KDCluster(level, axis, data))
 
             l_axis, r_axis = middleaxis(axis[0])

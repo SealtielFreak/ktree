@@ -2,32 +2,38 @@ import random
 
 from ktree.kdtree import KDTree
 
-N_DIMENSION = 5
-
-random.seed(0)
 
 def create_blobs(n, axis):
     a, b = axis
 
-    return [
-        random.uniform(a, b) for _ in range(n)
-    ]
+    return [random.uniform(a, b) for _ in range(n)]
 
+N_LENGTH = 100
+N_DIMENSION = 3
 
-tree = KDTree([(-5, 5) for _ in range(N_DIMENSION)], 5)
+tree = KDTree([(-5, 5) for _ in range(N_DIMENSION)], 200)
 
-for _ in range(5):
-    tree.insert(create_blobs(N_DIMENSION, (1, 2)))
+random.seed(0)
 
-for _ in range(5):
-    tree.insert(create_blobs(N_DIMENSION, (3, 3.5)))
+data = [
+           create_blobs(N_DIMENSION, (1, 2)) for _ in range(N_LENGTH)
+       ] + [
+           create_blobs(N_DIMENSION, (0, 6)) for _ in range(N_LENGTH)
+       ] + [
+           create_blobs(N_DIMENSION, (4, 5)) for _ in range(N_LENGTH)
+       ] + [
+           create_blobs(N_DIMENSION, (-5, -3)) for _ in range(N_LENGTH)
+       ] + [
+           create_blobs(N_DIMENSION, (-3, -2)) for _ in range(N_LENGTH)
+       ]
 
-for _ in range(5):
-    tree.insert(create_blobs(N_DIMENSION, (-1, 0)))
+for d in data:
+    tree.insert(d)
 
-for _ in range(5):
-    tree.insert(create_blobs(N_DIMENSION, (0.5, 1.5)))
+clusters = tree.sort()
 
-for cluster in tree.sort():
+for cluster in clusters:
     print(cluster)
-    print(cluster.data)
+    # print(cluster.data)
+
+print(len(clusters))
