@@ -1,6 +1,6 @@
-from ktree.ntree import NTree
+from ktree.ntree import NTreeStatic
 
-tree = NTree([(0, 10)], 2)
+tree = NTreeStatic([(0, 10)], 2)
 
 tree.insert([2])
 tree.insert([1])

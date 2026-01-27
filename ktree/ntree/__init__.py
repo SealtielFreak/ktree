@@ -1,6 +1,8 @@
 import collections
 import typing
 
+import numpy as np
+
 from ktree.libs import is_collision, distance, SupportNumber
 from ktree.tree import TreeContainerInterface, ClusterInterface
 
@@ -40,7 +42,7 @@ class NClusterNode(ClusterInterface, typing.Generic[SupportNumber]):
         return f"Cluster(axis={self.axis})"
 
 
-class NTree(TreeContainerInterface, typing.Generic[SupportNumber]):
+class NTreeStatic(TreeContainerInterface, typing.Generic[SupportNumber]):
     def __init__(self, axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]], limit_divisions: int = 1):
         """
         NTree is the main container for sorting elements.
@@ -51,7 +53,7 @@ class NTree(TreeContainerInterface, typing.Generic[SupportNumber]):
         if limit_divisions < -1:
             raise ValueError("Limit divisions cannot be less than one.")
 
-        self.__children: typing.Dict[int, NTree[SupportNumber]] = {}
+        self.__children: typing.Dict[int, NTreeStatic[SupportNumber]] = {}
         self.__node: NClusterNode[SupportNumber] = NClusterNode(axis=axis, data=[])
         self.__axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]] = axis
         self.__limit_divisions: int = limit_divisions
@@ -96,7 +98,7 @@ class NTree(TreeContainerInterface, typing.Generic[SupportNumber]):
         self.__node = NClusterNode(axis=self.__axis, data=[])
 
     def __insert_recursive(self, verx: typing.List[SupportNumber]):
-        def create_vertex(verx):
+        def create_static_vertex(verx):
             root_axis = collections.deque()
 
             for axis, c in zip(self.axis, verx):
@@ -112,7 +114,9 @@ class NTree(TreeContainerInterface, typing.Generic[SupportNumber]):
 
             return axis
 
-        tree = NTree(create_vertex(verx), self.__limit_divisions - 1)
+        shape = create_static_vertex(verx)
+
+        tree = NTreeStatic(shape, self.__limit_divisions - 1)
         tree_key = hash(tree)
 
         if tree_key in self.__children:
