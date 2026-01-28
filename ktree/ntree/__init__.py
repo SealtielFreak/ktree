@@ -170,6 +170,9 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[SupportNumber]):
         self.__limit_divisions: int = limit_divisions
         self.__data = collections.deque()
 
+    def __del__(self):
+        self.clear()
+
     def __hash__(self):
         return hash(tuple(self.__shape))
 
@@ -198,6 +201,25 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[SupportNumber]):
         :return:
         """
 
+        self.__children = {}
+
+        sorted_elements = []
+        self.__insert_recursive(sorted_elements)
+
+        return sorted_elements
+
+    def __iter__(self):
+        """
+        Iterate the already sorted elements of sorted ones.
+        :return:
+        """
+        return iter(self.sort())
+
+    def clear(self):
+        self.__children.clear()
+        self.__data.clear()
+
+    def __insert_recursive(self, sorted_data):
         def calc_subshape(_data, _shape):
             root_axis = collections.deque()
 
@@ -211,45 +233,26 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[SupportNumber]):
 
             return list(root_axis)
 
+
         data = np.array(self.__data)
         axis = len(data[0])
         shape = np.array([(min(data[:, n]), max(data[:, n])) for n in range(axis)]).astype(float).tolist()
 
         self.__shape = shape
 
-        for d in self.__data:
-            tree = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape))
-            tree_key = hash(tree)
-
-            if tree_key in self.__children:
-                tree = self.__children[tree_key]
-            else:
-                self.__children[tree_key] = tree
-
-            tree.insert(d)
-
-        sorted_data = []
-
         if self.__limit_divisions > 0:
+            for d in self.__data:
+                tree = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape))
+                tree_key = hash(tree)
+
+                if tree_key in self.__children:
+                    tree = self.__children[tree_key]
+                else:
+                    self.__children[tree_key] = tree
+
+                tree.insert(d)
+
             for tree in self.__children.values():
-                sort_data = tree.sort()
-
-                if len(sort_data) > 0:
-                    sorted_data += [sort_data]
+                tree.__insert_recursive(sorted_data)
         else:
-            return self.shape, list(self.__data)
-
-        return sorted_data
-
-    def __iter__(self):
-        """
-        Iterate the already sorted elements of sorted ones.
-        :return:
-        """
-        return iter(self.__iter_child_recursive())
-
-    def clear(self):
-        self.__node = NClusterNode(axis=self.__axis, data=[])
-
-    def __insert_recursive(self):
-        pass
+            sorted_data.append((self.shape, list(self.__data)))
