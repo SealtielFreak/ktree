@@ -149,3 +149,107 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[SupportNumber]):
             return nodes
 
         return get_iter_child(self, [])
+
+
+class NTreeDynamic(TreeContainerInterface, typing.Generic[SupportNumber]):
+    def __init__(self, limit_divisions: int = 1, shape=None):
+        """
+        NTreeDynamic is the main container for sorting elements.
+
+        :param axis: Establishes the main axes where the elements will be ordered.
+        :param limit_divisions: Maximum number of divisions.
+        """
+        if limit_divisions < -1:
+            raise ValueError("Limit divisions cannot be less than one.")
+
+        self.__children: typing.Dict[int, NTreeDynamic[SupportNumber]] = {}
+
+        # self.__node: typing.Optional[NClusterNode[SupportNumber]] = None
+        self.__shape: typing.Optional[typing.List[typing.Tuple[SupportNumber, SupportNumber]]] = shape
+
+        self.__limit_divisions: int = limit_divisions
+        self.__data = collections.deque()
+
+    def __hash__(self):
+        return hash(tuple(self.__shape))
+
+    @property
+    def shape(self):
+        return [*self.__shape]
+
+    @property
+    def children(self):
+        return self.__children
+
+    @property
+    def node(self) -> NClusterNode:
+        return self.__node
+
+    @property
+    def is_parent(self):
+        return len(self.children) != 0
+
+    def insert(self, data):
+        self.__data.append(data)
+
+    def sort(self):
+        """
+        This method returns the elements already sorted from sorted.
+        :return:
+        """
+
+        def calc_subshape(_data, _shape):
+            root_axis = collections.deque()
+
+            for (x, y), c in zip(_shape, _data):
+                d = distance(x, y)
+
+                if x <= c <= (x + d):
+                    root_axis.append((x, x + d))
+                else:
+                    root_axis.append((x + d, y))
+
+            return list(root_axis)
+
+        data = np.array(self.__data)
+        axis = len(data[0])
+        shape = np.array([(min(data[:, n]), max(data[:, n])) for n in range(axis)]).astype(float).tolist()
+
+        self.__shape = shape
+
+        for d in self.__data:
+            tree = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape))
+            tree_key = hash(tree)
+
+            if tree_key in self.__children:
+                tree = self.__children[tree_key]
+            else:
+                self.__children[tree_key] = tree
+
+            tree.insert(d)
+
+        sorted_data = []
+
+        if self.__limit_divisions > 0:
+            for tree in self.__children.values():
+                sort_data = tree.sort()
+
+                if len(sort_data) > 0:
+                    sorted_data += [sort_data]
+        else:
+            return self.shape, list(self.__data)
+
+        return sorted_data
+
+    def __iter__(self):
+        """
+        Iterate the already sorted elements of sorted ones.
+        :return:
+        """
+        return iter(self.__iter_child_recursive())
+
+    def clear(self):
+        self.__node = NClusterNode(axis=self.__axis, data=[])
+
+    def __insert_recursive(self):
+        pass
