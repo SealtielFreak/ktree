@@ -14,3 +14,5 @@ for _ in range(3):
 for nodes in tree.sort():
     print(nodes)
     print(nodes.data)
+
+print(tree.shape)

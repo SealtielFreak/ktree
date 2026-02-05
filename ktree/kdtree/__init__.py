@@ -17,7 +17,7 @@ class KDCluster(ClusterInterface, typing.Generic[SupportNumber]):
         return self.__level
 
     @property
-    def axis(self):
+    def shape(self):
         return self.__axis
 
     @property
@@ -40,7 +40,7 @@ class KDCluster(ClusterInterface, typing.Generic[SupportNumber]):
         return iter(self.__data)
 
     def __repr__(self):
-        return f"Cluster(axis={self.axis}, level={self.level})"
+        return f"Cluster(axis={self.shape}, level={self.level})"
 
 
 class KDTree(TreeContainerInterface, typing.Generic[SupportNumber]):

@@ -8,16 +8,16 @@ N_DIMENSION = 3
 
 random.seed(0)
 
-tree = NTreeDynamic(2)
-data = np.random.uniform(0, 64, (32 * 32, 3))
+tree = NTreeDynamic(1)
 
-for a in data:
-    tree.insert(a)
+for a in range(30):
+    data = np.random.uniform(0, 64, 3)
+    tree.insert(data)
 
 sorted_data = tree.sort()
 
-for n, (shape, data) in enumerate(sorted_data):
-    print(f"Shape[{n}]:", shape)
-    # print(len(data), data)
+for n, node in enumerate(sorted_data):
+    print(node)
+    print(node.data)
 
 print(tree.shape)

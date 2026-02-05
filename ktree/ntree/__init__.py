@@ -7,18 +7,20 @@ from ktree.libs import is_collision, distance, SupportNumber
 from ktree.tree import TreeContainerInterface, ClusterInterface
 
 
-class NClusterNode(ClusterInterface, typing.Generic[SupportNumber]):
-    def __init__(self, axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]], data: typing.List):
-        self.__axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]] = axis
-        self.__data: typing.List = data
+M = typing.TypeVar('M')
+
+class NClusterNode(ClusterInterface):
+    def __init__(self, shape: M, data: typing.List | typing.Deque):
+        self.__shape: M = shape
+        self.__data: typing.List | typing.Deque = data
 
     @property
     def data(self):
         return self.__data
 
     @property
-    def axis(self):
-        return self.__axis
+    def shape(self):
+        return self.__shape
 
     def clear(self):
         self.__data = []
@@ -26,8 +28,8 @@ class NClusterNode(ClusterInterface, typing.Generic[SupportNumber]):
     def append(self, data):
         self.__data.append(data)
 
-    def is_collide(self, node: typing.List[SupportNumber]):
-        return is_collision(self.axis, node)
+    def is_collide(self, node):
+        return is_collision(self.shape, node)
 
     def __len__(self):
         return len(self.data)
@@ -36,14 +38,14 @@ class NClusterNode(ClusterInterface, typing.Generic[SupportNumber]):
         return iter(self.data)
 
     def __hash__(self):
-        return hash(tuple(self.axis))
+        return hash(tuple(self.shape))
 
     def __repr__(self):
-        return f"Cluster(axis={self.axis})"
+        return f"Cluster(axis={self.shape})"
 
 
-class NTreeStatic(TreeContainerInterface, typing.Generic[SupportNumber]):
-    def __init__(self, axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]], limit_divisions: int = 1):
+class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
+    def __init__(self, axis: M, limit_divisions: int = 1):
         """
         NTree is the main container for sorting elements.
 
@@ -53,17 +55,17 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[SupportNumber]):
         if limit_divisions < -1:
             raise ValueError("Limit divisions cannot be less than one.")
 
-        self.__children: typing.Dict[int, NTreeStatic[SupportNumber]] = {}
-        self.__node: NClusterNode[SupportNumber] = NClusterNode(axis=axis, data=[])
-        self.__axis: typing.List[typing.Tuple[SupportNumber, SupportNumber]] = axis
+        self.__children: typing.Dict[int, NTreeStatic[M]] = {}
+        self.__node: NClusterNode = NClusterNode(shape=axis, data=[])
+        self.__shape: M = axis
         self.__limit_divisions: int = limit_divisions
 
     def __hash__(self):
         return hash(self.__node)
 
     @property
-    def axis(self):
-        return [*self.__axis]
+    def shape(self):
+        return [*self.__shape]
 
     @property
     def children(self):
@@ -95,13 +97,13 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[SupportNumber]):
         return iter(self.__iter_child_recursive())
 
     def clear(self):
-        self.__node = NClusterNode(axis=self.__axis, data=[])
+        self.__node = NClusterNode(shape=self.__shape, data=[])
 
     def __insert_recursive(self, verx: typing.List[SupportNumber]):
         def create_static_vertex(verx):
             root_axis = collections.deque()
 
-            for axis, c in zip(self.axis, verx):
+            for axis, c in zip(self.shape, verx):
                 x, y = axis
                 d = distance(x, y)
 
@@ -151,7 +153,7 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[SupportNumber]):
         return get_iter_child(self, [])
 
 
-class NTreeDynamic(TreeContainerInterface, typing.Generic[SupportNumber]):
+class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
     def __init__(self, limit_divisions: int = 1, shape=None):
         """
         NTreeDynamic is the main container for sorting elements.
@@ -162,13 +164,13 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[SupportNumber]):
         if limit_divisions < -1:
             raise ValueError("Limit divisions cannot be less than one.")
 
-        self.__children: typing.Dict[int, NTreeDynamic[SupportNumber]] = {}
+        self.__children: typing.Dict[int, NTreeDynamic[M]] = {}
 
         # self.__node: typing.Optional[NClusterNode[SupportNumber]] = None
-        self.__shape: typing.Optional[typing.List[typing.Tuple[SupportNumber, SupportNumber]]] = shape
+        self.__shape: M = shape
 
         self.__limit_divisions: int = limit_divisions
-        self.__data = collections.deque()
+        self.__data: typing.Collection[M] = collections.deque()
 
     def __del__(self):
         self.clear()
@@ -183,10 +185,6 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[SupportNumber]):
     @property
     def children(self):
         return self.__children
-
-    @property
-    def node(self) -> NClusterNode:
-        return self.__node
 
     @property
     def is_parent(self):
@@ -255,4 +253,14 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[SupportNumber]):
             for tree in self.__children.values():
                 tree.__insert_recursive(sorted_data)
         else:
-            sorted_data.append((self.shape, list(self.__data)))
+            n = NClusterNode(
+                shape=self.shape,
+                data=list(self.__data)
+            )
+
+            # sorted_data.append((self.shape, list(self.__data)))
+
+            sorted_data.append(NClusterNode(
+                shape=self.shape,
+                data=collections.deque(self.__data)
+            ))
