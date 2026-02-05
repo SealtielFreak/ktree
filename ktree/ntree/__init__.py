@@ -82,7 +82,7 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
     def insert(self, data):
         self.__insert_recursive(data)
 
-    def sort(self):
+    def sort(self) -> list:
         """
         This method returns the elements already sorted from sorted.
         :return:
@@ -193,7 +193,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
     def insert(self, data):
         self.__data.append(data)
 
-    def sort(self):
+    def sort(self) -> list:
         """
         This method returns the elements already sorted from sorted.
         :return:
