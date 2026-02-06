@@ -199,10 +199,10 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         :return:
         """
 
-        self.__children = {}
+        sorted_elements: list = []
 
-        sorted_elements = []
-        self.__insert_recursive(sorted_elements)
+        self.__children = {}
+        self.__recusirve_sorting(sorted_elements)
 
         return sorted_elements
 
@@ -217,7 +217,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         self.__children.clear()
         self.__data.clear()
 
-    def __insert_recursive(self, sorted_data):
+    def __recusirve_sorting(self, sorted_data: list):
         def calc_subshape(_data, _shape):
             root_axis = collections.deque()
 
@@ -240,7 +240,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
 
         if self.__limit_divisions > 0:
             for d in self.__data:
-                tree = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape))
+                tree: NTreeDynamic = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape))
                 tree_key = hash(tree)
 
                 if tree_key in self.__children:
@@ -251,14 +251,12 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
                 tree.insert(d)
 
             for tree in self.__children.values():
-                tree.__insert_recursive(sorted_data)
+                tree.__recusirve_sorting(sorted_data)
         else:
             n = NClusterNode(
                 shape=self.shape,
                 data=list(self.__data)
             )
-
-            # sorted_data.append((self.shape, list(self.__data)))
 
             sorted_data.append(NClusterNode(
                 shape=self.shape,
