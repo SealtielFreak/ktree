@@ -2,7 +2,7 @@ import os
 
 from setuptools import setup, find_packages
 
-MODULE_TITLE = "ntree"
+MODULE_TITLE = "ktree"
 MODULE_VERSION = "0.0.2"
 MODULE_DESCRIPTION = "This module provides a hierarchical spatial ordering structure, which can be used as a QuadTree or an Octree."
 MODULE_PYTHON_REQUIRES = ">=3.10"
