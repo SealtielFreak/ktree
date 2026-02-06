@@ -6,8 +6,8 @@ import numpy as np
 from ktree.libs import is_collision, distance, SupportNumber
 from ktree.tree import TreeContainerInterface, ClusterInterface
 
-
 M = typing.TypeVar('M')
+
 
 class NClusterNode(ClusterInterface):
     def __init__(self, shape: M, data: typing.List | typing.Deque):
@@ -230,7 +230,6 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
                     root_axis.append((x + d, y))
 
             return list(root_axis)
-
 
         data = np.array(self.__data)
         axis = len(data[0])

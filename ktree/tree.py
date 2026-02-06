@@ -1,8 +1,8 @@
 import abc
 import typing
 
-
 T = typing.TypeVar('T')
+
 
 class ClusterInterface(abc.ABC, typing.Generic[T]):
     @abc.abstractmethod
