@@ -2,18 +2,11 @@ import random
 
 import numpy as np
 
-from blob import blob_sphere, blob_spiral
 from ktree.ntree import NTreeDynamic
 
 N_DIMENSION = 3
 
 random.seed(0)
-
-data = np.concatenate([
-    blob_sphere(100, (0, 0, 0), 100),
-    blob_sphere(50, (50, 50, 50), 25),
-    blob_sphere(50, (-25, -50, -25), 25),
-])
 
 tree = NTreeDynamic(1)
 
