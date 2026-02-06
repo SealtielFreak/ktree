@@ -3,7 +3,7 @@ import typing
 
 import numpy as np
 
-from ktree.libs import is_collision, distance, SupportNumber
+from ktree.libs import is_collision, calc_distance_euclidean, SupportNumber
 from ktree.tree import TreeContainerInterface, ClusterInterface
 
 M = typing.TypeVar('M')
@@ -100,12 +100,12 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
         self.__node = NClusterNode(shape=self.__shape, data=[])
 
     def __insert_recursive(self, verx: typing.List[SupportNumber]):
-        def create_static_vertex(verx):
+        def create_static_vertex(v):
             root_axis = collections.deque()
 
-            for axis, c in zip(self.shape, verx):
+            for axis, c in zip(self.shape, v):
                 x, y = axis
-                d = distance(x, y)
+                d = calc_distance_euclidean(x, y)
 
                 if x <= c <= (x + d):
                     root_axis.append((x, x + d))
@@ -158,7 +158,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         """
         NTreeDynamic is the main container for sorting elements.
 
-        :param axis: Establishes the main axes where the elements will be ordered.
+        :param shape: Establishes the main axes where the elements will be ordered.
         :param limit_divisions: Maximum number of divisions.
         """
         if limit_divisions < -1:
@@ -222,12 +222,12 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
             root_axis = collections.deque()
 
             for (x, y), c in zip(_shape, _data):
-                d = distance(x, y)
+                dist = calc_distance_euclidean(x, y)
 
-                if x <= c <= (x + d):
-                    root_axis.append((x, x + d))
+                if x <= c <= (x + dist):
+                    root_axis.append((x, x + dist))
                 else:
-                    root_axis.append((x + d, y))
+                    root_axis.append((x + dist, y))
 
             return list(root_axis)
 
@@ -252,11 +252,6 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
             for tree in self.__children.values():
                 tree.__recursive_sorting(sorted_data)
         else:
-            n = NClusterNode(
-                shape=self.shape,
-                data=list(self.__data)
-            )
-
             sorted_data.append(NClusterNode(
                 shape=self.shape,
                 data=collections.deque(self.__data)

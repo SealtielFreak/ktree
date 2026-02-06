@@ -19,7 +19,7 @@ def is_collision(that: typing.List[typing.Tuple[SupportNumber, SupportNumber]],
     return all([check_axis_intersect(t, z) for t, z in zip(that, other)])
 
 
-def distance(x: SupportNumber, y: SupportNumber):
+def calc_distance_euclidean(x: SupportNumber, y: SupportNumber):
     return math.fabs(y - x) / 2
 
 
