@@ -170,7 +170,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         self.__shape: M = shape
 
         self.__limit_divisions: int = limit_divisions
-        self.__data: typing.Collection[M] = collections.deque()
+        self.__data: typing.Deque[M] = collections.deque()
 
     def __del__(self):
         self.clear()
@@ -202,7 +202,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         sorted_elements: list = []
 
         self.__children = {}
-        self.__recusirve_sorting(sorted_elements)
+        self.__recursive_sorting(sorted_elements)
 
         return sorted_elements
 
@@ -217,7 +217,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         self.__children.clear()
         self.__data.clear()
 
-    def __recusirve_sorting(self, sorted_data: list):
+    def __recursive_sorting(self, sorted_data: list):
         def calc_subshape(_data, _shape):
             root_axis = collections.deque()
 
@@ -251,7 +251,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
                 tree.insert(d)
 
             for tree in self.__children.values():
-                tree.__recusirve_sorting(sorted_data)
+                tree.__recursive_sorting(sorted_data)
         else:
             n = NClusterNode(
                 shape=self.shape,
