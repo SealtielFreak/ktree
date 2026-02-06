@@ -1,15 +1,15 @@
 import abc
 import typing
 
-from ktree.libs import SupportNumber
+T = typing.TypeVar('T')
 
 
-class ClusterInterface(abc.ABC):
+class ClusterInterface(abc.ABC, typing.Generic[T]):
     @abc.abstractmethod
     def clear(self): ...
 
     @abc.abstractmethod
-    def append(self, node: typing.List[SupportNumber]): ...
+    def append(self, node: T): ...
 
     @property
     @abc.abstractmethod
@@ -17,7 +17,7 @@ class ClusterInterface(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def axis(self): ...
+    def shape(self): ...
 
     @abc.abstractmethod
     def __len__(self): ...
@@ -32,9 +32,9 @@ class ClusterInterface(abc.ABC):
     def __repr__(self): ...
 
 
-class TreeContainerInterface(abc.ABC):
+class TreeContainerInterface(abc.ABC, typing.Generic[T]):
     @abc.abstractmethod
-    def insert(self, data: typing.List[SupportNumber]): ...
+    def insert(self, data: T): ...
 
     @abc.abstractmethod
     def sort(self) -> typing.List[ClusterInterface]: ...
