@@ -154,7 +154,7 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
 
 
 class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
-    def __init__(self, limit_divisions: int = 1, shape=None):
+    def __init__(self, limit_divisions: int = 1, shape=None, limit_size: int | None = None):
         """
         NTreeDynamic is the main container for sorting elements.
 
@@ -171,12 +171,17 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
 
         self.__limit_divisions: int = limit_divisions
         self.__data: typing.Deque[M] = collections.deque()
+        self.__limit_size = limit_size
 
     def __del__(self):
         self.clear()
 
     def __hash__(self):
         return hash(tuple(self.__shape))
+
+    @property
+    def limit_size(self):
+        return self.__limit_size
 
     @property
     def shape(self):
@@ -214,8 +219,13 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         return iter(self.sort())
 
     def clear(self):
-        self.__children.clear()
-        self.__data.clear()
+        """
+        self.__children = {}
+        self.__data = collections.deque()
+        """
+
+    def __len__(self):
+        return len(self.__data)
 
     def __recursive_sorting(self, sorted_data: list):
         def calc_subshape(_data, _shape):
@@ -239,7 +249,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
 
         if self.__limit_divisions > 0:
             for d in self.__data:
-                tree: NTreeDynamic = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape))
+                tree: NTreeDynamic = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape), limit_size=self.__limit_size)
                 tree_key = hash(tree)
 
                 if tree_key in self.__children:

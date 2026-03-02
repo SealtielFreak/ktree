@@ -6,13 +6,28 @@ from ktree.ntree import NTreeDynamic
 
 N_DIMENSION = 3
 
-random.seed(0)
+def generate_dataset(centers, stds, n_samples=500, ndim=3):
+    X = []
+    y = []
 
-tree = NTreeDynamic(1)
+    for i, center in enumerate(centers):
+        cluster = np.random.normal(loc=center, scale=stds[i], size=(n_samples // len(centers), ndim))
+        X.append(cluster)
+        y.append(np.full(n_samples // len(centers), i))
 
-for a in range(30):
-    data = np.random.uniform(-1, 1, 3)
-    tree.insert(data)
+    return np.vstack(X), np.concatenate(y)
+
+
+tree = NTreeDynamic(1, limit_size=10)
+
+data, ground_truth = generate_dataset(
+    [[1, 1, 1], [3, 3, 3], [2, 2, 1]],
+    stds=[.5, .5, .5],
+    n_samples=500
+)
+
+for a in data:
+    tree.insert(a)
 
 sorted_data = tree.sort()
 sorted_data = sorted(sorted_data, key=lambda x: len(x))[::-1]
