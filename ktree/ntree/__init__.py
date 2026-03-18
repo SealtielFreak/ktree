@@ -3,7 +3,7 @@ import typing
 
 import numpy as np
 
-from ktree.libs import is_collision, calc_distance_euclidean, SupportNumber
+from ktree.libs import is_collision, calc_distance_euclidean
 from ktree.tree import TreeContainerInterface, ClusterInterface
 
 M = typing.TypeVar('M')
@@ -45,7 +45,7 @@ class NClusterNode(ClusterInterface):
 
 
 class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
-    def __init__(self, axis: M, limit_divisions: int = 1):
+    def __init__(self, limit_divisions: int = 1, shape=None):
         """
         NTree is the main container for sorting elements.
 
@@ -55,9 +55,10 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
         if limit_divisions < -1:
             raise ValueError("Limit divisions cannot be less than one.")
 
+        self.raw_data: typing.Deque[M] | None = None
         self.__children: typing.Dict[int, NTreeStatic[M]] = {}
-        self.__node: NClusterNode = NClusterNode(shape=axis, data=[])
-        self.__shape: M = axis
+        self.__node: NClusterNode = NClusterNode(shape=shape, data=[])
+        self.__shape = shape
         self.__limit_divisions: int = limit_divisions
 
     def __hash__(self):
@@ -80,63 +81,75 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
         return len(self.children) != 0
 
     def insert(self, data):
-        self.__insert_recursive(data)
+        if self.raw_data is None:
+            self.raw_data = collections.deque()
+
+        self.raw_data.append(data)
 
     def sort(self) -> list:
         """
         This method returns the elements already sorted from sorted.
         :return:
         """
-        return self.__iter_child_recursive()
+
+        sorted_elements: list = []
+
+        self.__children = {}
+        self._recursive_sorting(sorted_elements)
+
+        return sorted_elements
 
     def __iter__(self):
         """
         Iterate the already sorted elements of sorted ones.
         :return:
         """
-        return iter(self.__iter_child_recursive())
+        return iter(self.sort())
 
     def clear(self):
         self.__node = NClusterNode(shape=self.__shape, data=[])
 
-    def __insert_recursive(self, verx: typing.List[SupportNumber]):
-        def create_static_vertex(v):
-            root_axis = collections.deque()
+    def _recursive_sorting(self, sorted_data: list):
+        def calc_subshape(_data, _shape):
+            root_axis = []
 
-            for axis, c in zip(self.shape, v):
-                x, y = axis
-                d = calc_distance_euclidean(x, y)
+            for (x, y), c in zip(_shape, _data):
+                dist = calc_distance_euclidean(x, y)
 
-                if x <= c <= (x + d):
-                    root_axis.append((x, x + d))
+                if x <= c <= (x + dist):
+                    root_axis.append((x, x + dist))
                 else:
-                    root_axis.append((x + d, y))
+                    root_axis.append((x + dist, y))
 
-            axis = list(root_axis)
+            return root_axis
 
-            return axis
+        data = np.array(self.raw_data)
+        axis = len(data[0])
+        shape = np.array([(min(data[:, n]), max(data[:, n])) for n in range(axis)])
 
-        shape = create_static_vertex(verx)
-
-        tree = NTreeStatic(shape, self.__limit_divisions - 1)
-        tree_key = hash(tree)
-
-        if tree_key in self.__children:
-            tree = self.__children[tree_key]
-        else:
-            self.__children[tree_key] = tree
+        self.__shape = shape
 
         if self.__limit_divisions > 0:
-            return tree.insert(verx)
+            for d in self.raw_data:
+                tree: NTreeStatic = NTreeStatic(self.__limit_divisions - 1, shape=calc_subshape(d, shape))
+                tree_key = hash(tree)
+
+                if tree_key in self.__children:
+                    tree = self.__children[tree_key]
+                else:
+                    self.__children[tree_key] = tree
+
+                tree.insert(d)
+
+            for tree in self.__children.values():
+                tree._recursive_sorting(sorted_data)
         else:
-            if not tree.node.is_collide(verx):
-                raise ValueError(f"Vertex no collide: {tree.node} {verx}")
+            sorted_data.append(NClusterNode(
+                shape=self.shape,
+                data=collections.deque(self.raw_data)
+            ))
 
-            tree.node.append(verx)
-
-        return tree
-
-    def __iter_child_recursive(self):
+    def _iter_child_recursive(self):
         def get_iter_child(root, nodes=None):
             if nodes is None:
                 nodes = []
@@ -164,13 +177,13 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         if limit_divisions < -1:
             raise ValueError("Limit divisions cannot be less than one.")
 
+        self.raw_data: typing.Deque[M] | None = None
+
         self.__children: typing.Dict[int, NTreeDynamic[M]] = {}
 
-        # self.__node: typing.Optional[NClusterNode[SupportNumber]] = None
         self.__shape: M = shape
 
         self.__limit_divisions: int = limit_divisions
-        self.__data: typing.Deque[M] = collections.deque()
         self.__limit_size = limit_size
 
     def __del__(self):
@@ -196,7 +209,10 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         return len(self.children) != 0
 
     def insert(self, data):
-        self.__data.append(data)
+        if self.raw_data is None:
+            self.raw_data = collections.deque()
+
+        self.raw_data.append(data)
 
     def sort(self) -> list:
         """
@@ -207,7 +223,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         sorted_elements: list = []
 
         self.__children = {}
-        self.__recursive_sorting(sorted_elements)
+        self._recursive_sorting(sorted_elements)
 
         return sorted_elements
 
@@ -225,9 +241,9 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         """
 
     def __len__(self):
-        return len(self.__data)
+        return len(self.raw_data)
 
-    def __recursive_sorting(self, sorted_data: list):
+    def _recursive_sorting(self, sorted_data: list):
         def calc_subshape(_data, _shape):
             root_axis = collections.deque()
 
@@ -241,15 +257,16 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
 
             return list(root_axis)
 
-        data = np.array(self.__data)
+        data = np.array(self.raw_data)
         axis = len(data[0])
         shape = np.array([(min(data[:, n]), max(data[:, n])) for n in range(axis)]).astype(float).tolist()
 
         self.__shape = shape
 
         if self.__limit_divisions > 0:
-            for d in self.__data:
-                tree: NTreeDynamic = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape), limit_size=self.__limit_size)
+            for d in self.raw_data:
+                tree: NTreeDynamic = NTreeDynamic(self.__limit_divisions - 1, shape=calc_subshape(d, shape),
+                                                  limit_size=self.__limit_size)
                 tree_key = hash(tree)
 
                 if tree_key in self.__children:
@@ -260,9 +277,121 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
                 tree.insert(d)
 
             for tree in self.__children.values():
-                tree.__recursive_sorting(sorted_data)
+                tree._recursive_sorting(sorted_data)
         else:
             sorted_data.append(NClusterNode(
                 shape=self.shape,
-                data=collections.deque(self.__data)
+                data=collections.deque(self.raw_data)
+            ))
+
+
+class NTreeMean(TreeContainerInterface, typing.Generic[M]):
+    def __init__(self, limit_divisions: int = 1, shape=None):
+        """
+        NTreeDynamic is the main container for sorting elements.
+
+        :param shape: Establishes the main axes where the elements will be ordered.
+        :param limit_divisions: Maximum number of divisions.
+        """
+        if limit_divisions < -1:
+            raise ValueError("Limit divisions cannot be less than one.")
+
+        self.raw_data: typing.Deque[M] | None = None
+
+        self.__children: typing.Dict[int, NTreeMean[M]] = {}
+        self.__shape = shape
+        self.__limit_divisions: int = limit_divisions
+
+    def __del__(self):
+        self.clear()
+
+    def __hash__(self):
+        return hash(tuple(self.__shape))
+
+    @property
+    def shape(self):
+        if self.__shape:
+            return [*self.__shape]
+
+        return None
+
+    @property
+    def children(self):
+        return self.__children
+
+    @property
+    def is_parent(self):
+        return len(self.children) != 0
+
+    def insert(self, data):
+        if self.raw_data is None:
+            self.raw_data = collections.deque()
+
+        self.raw_data.append(data)
+
+    def sort(self) -> list:
+        """
+        This method returns the elements already sorted from sorted.
+        :return:
+        """
+
+        sorted_elements: list = []
+
+        self.__children = {}
+        self._recursive_sorting(sorted_elements)
+
+        return sorted_elements
+
+    def __iter__(self):
+        """
+        Iterate the already sorted elements of sorted ones.
+        :return:
+        """
+        return iter(self.sort())
+
+    def clear(self):
+        """
+        self.__children = {}
+        self.__data = collections.deque()
+        """
+
+    def __len__(self):
+        return len(self.raw_data)
+
+    def _recursive_sorting(self, sorted_data: list):
+        def calc_subshape(_data, _shape):
+            root_axis = []
+
+            for (x, m, y), c in zip(_shape, _data):
+                if x <= c <= (x + m):
+                    root_axis.append((x, x + m))
+                else:
+                    root_axis.append((x + m, y))
+
+            return root_axis
+
+        data = np.array(self.raw_data)
+        axis = len(data[0])
+        shape = np.array([(min(data[:, n]), np.mean(data[:, n]), max(data[:, n])) for n in range(axis)])
+
+        self.__shape = shape
+
+        if self.__limit_divisions > 0:
+            for d in self.raw_data:
+                tree: NTreeMean = NTreeMean(self.__limit_divisions - 1, shape=calc_subshape(d, shape))
+                tree_key = hash(tree)
+
+                if tree_key in self.__children:
+                    tree = self.__children[tree_key]
+                else:
+                    self.__children[tree_key] = tree
+
+                tree.insert(d)
+
+            for tree in self.__children.values():
+                tree._recursive_sorting(sorted_data)
+        else:
+            sorted_data.append(NClusterNode(
+                shape=shape,
+                data=collections.deque(self.raw_data)
             ))
