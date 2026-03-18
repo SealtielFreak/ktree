@@ -1,9 +1,12 @@
 import os
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
+
+from Cython.Build import cythonize
+
 
 MODULE_TITLE = "ktree"
-MODULE_VERSION = "0.0.2"
+MODULE_VERSION = "0.1.0"
 MODULE_DESCRIPTION = "This module provides a hierarchical spatial ordering structure, which can be used as a QuadTree or an Octree."
 MODULE_PYTHON_REQUIRES = ">=3.10"
 MODULE_LONG_DESCRIPTION = ""
@@ -11,24 +14,38 @@ MODULE_DIRECTORY_SOURCE = "ktree"
 MODULE_DIRECTORY_SAMPLE = "examples"
 MODULE_DIRECTORY_RESOURCES = "resources"
 MODULE_SOURCE = []
+MODULE_EXT = []
 MODULE_SAMPLE_SOURCE = []
 MODULE_SAMPLE_RESOURCES = []
+
+for dirpath, dirnames, filenames in os.walk(MODULE_DIRECTORY_SOURCE):
+    for filename in filenames:
+        full_path = os.path.join(dirpath, filename)
+
+        if filename.endswith(".pyx"):
+            module_name = os.path.splitext(full_path)[0].replace(os.sep, ".")
+            MODULE_EXT.append(Extension(module_name, [full_path]))
+
 
 for dirpath, dirnames, filenames in os.walk(MODULE_DIRECTORY_SAMPLE):
     for filename in filenames:
         MODULE_SAMPLE_SOURCE.append(os.path.join(dirpath, filename))
 
+
 for dirpath, dirnames, filenames in os.walk(MODULE_DIRECTORY_RESOURCES):
     for filename in filenames:
         MODULE_SAMPLE_RESOURCES.append(os.path.join(dirpath, filename))
 
+
 for dirpath, dirnames, filenames in os.walk(MODULE_DIRECTORY_SAMPLE):
     for filename in filenames:
-        if filename.endswith(".py"):
+        if filename.endswith(".py") and filename != "__init__.py":
             MODULE_SOURCE.append(os.path.join(dirpath, filename))
+
 
 with open("README.md", 'r', encoding='utf-8') as f:
     MODULE_LONG_DESCRIPTION += f.read()
+
 
 setup(
     name=MODULE_TITLE,
@@ -54,4 +71,9 @@ setup(
         (MODULE_DIRECTORY_SAMPLE, MODULE_SAMPLE_SOURCE),
         (MODULE_DIRECTORY_RESOURCES, MODULE_SAMPLE_RESOURCES),
     ],
+
+    ext_modules=cythonize(
+        MODULE_EXT,
+        language_level="3"
+    ),
 )
