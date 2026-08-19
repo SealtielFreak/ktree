@@ -39,7 +39,7 @@ setup(
     author='SealtielFreak',
     author_email="sealtielfreak@yandex.com",
 
-    license="WTFPL",
+    license="0BSD",
 
     url="https://github.com/SealtielFreak/ktree",
     packages=find_packages(),
