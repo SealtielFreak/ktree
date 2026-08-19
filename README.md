@@ -7,22 +7,32 @@
 ![Docs](https://img.shields.io/badge/docs-mkdocs-blue)
 ![License](https://img.shields.io/badge/license-0BSD-green)
 
-## Description
+KTree provides lightweight, N-dimensional spatial grouping structures in pure Python:
 
-This package provides several hierarchical grouping structures, including:
+- **KDTree** — recursive axis-aligned splitting over K dimensions.
+- **NTree** — configurable N-ary tree that can be used as a
+  [QuadTree](https://en.wikipedia.org/wiki/Quadtree) (2D) or
+  [Octree](https://en.wikipedia.org/wiki/Octree) (3D).
+- **NTreeDynamic** — same idea, but the bounding shape is discovered from the
+  inserted data instead of being fixed up front.
 
-- [KDTree](https://en.wikipedia.org/wiki/K-d_tree).
-- NTree (Applicable as [QuadTree](https://en.wikipedia.org/wiki/Quadtree) or [Octree](https://en.wikipedia.org/wiki/Octree))
+The package is intentionally small and has only one runtime dependency: NumPy.
 
-Configurable for multiple dimensions and easy implementation in projects.
+## Quickstart
 
-## Documentation
+```python
+from ktree import NTreeStatic
 
-Full documentation is built with [MkDocs](https://www.mkdocs.org/):
+# A 2D QuadTree over the unit square, with 2 subdivisions.
+tree = NTreeStatic([(0.0, 1.0), (0.0, 1.0)], limit_divisions=2)
 
-```bash
-uv sync --all-groups
-uv run mkdocs serve
+tree.insert([0.1, 0.1])
+tree.insert([0.01, 0.2])
+tree.insert([0.01, 0.5])
+
+for cluster in tree.sort():
+    print(cluster)
+    print(cluster.data)
 ```
 
 ## Install
@@ -39,10 +49,43 @@ pip install ktree
 pip install git+https://github.com/SealtielFreak/ktree.git
 ```
 
-### Development
+## Documentation
 
-This project uses [uv](https://docs.astral.sh/uv/):
+Full documentation is built with [MkDocs](https://www.mkdocs.org/):
 
 ```bash
-uv sync --all-groups
+uv sync
+uv run mkdocs serve
 ```
+
+The docs cover each tree type, the public API, and runnable examples for
+QuadTree, Octree, KDTree, and dynamic NTree use cases.
+
+## Development
+
+This project uses [uv](https://docs.astral.sh/uv/).
+
+```bash
+# Install the project and all dev/docs dependencies
+uv sync
+
+# Lint and format
+uv run ruff check src examples
+uv run ruff format src examples
+
+# Type-check
+uv run mypy src/
+
+# Run the bundled examples
+for f in examples/*.py; do uv run python "$f"; done
+
+# Build the package
+uv build
+
+# Build the documentation site
+uv run mkdocs build --strict
+```
+
+## License
+
+KTree is released under the [BSD Zero Clause (0BSD) license](LICENSE).
