@@ -1,0 +1,72 @@
+[project]
+name = "ktree"
+dynamic = ["version"]
+description = "This package provides a hierarchical spatial ordering structure, which can be used as a QuadTree or an Octree."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "0BSD"
+license-files = ["LICENSE"]
+authors = [
+    { name = "SealtielFreak", email = "sealtielfreak@yandex.com" },
+]
+keywords = ["kdtree", "quadtree", "octree", "spatial", "clustering", "tree"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Zero-Clause BSD (0BSD)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.24.4,<2.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/SealtielFreak/ktree"
+Repository = "https://github.com/SealtielFreak/ktree"
+Issues = "https://github.com/SealtielFreak/ktree/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/ktree/__init__.py"
+pattern = "__VERSION__ = ['\"](?P<version>.+?)['\"]"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.11",
+    "ruff>=0.6",
+]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.25",
+]
+
+[tool.uv]
+default-groups = ["dev", "docs"]
+
+[tool.mypy]
+python_version = "3.10"
+mypy_path = ["src"]
+warn_unused_ignores = true
+show_error_codes = true
+
+[tool.ruff]
+target-version = "py310"
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ktree"]

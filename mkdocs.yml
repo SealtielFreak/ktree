@@ -1,0 +1,45 @@
+site_name: KTree
+site_description: Hierarchical spatial ordering structures in Python
+site_url: https://sealtielfreak.github.io/ktree/
+repo_url: https://github.com/SealtielFreak/ktree
+repo_name: SealtielFreak/ktree
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            members_order: source
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_if_no_docstring: false
+
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - API Reference:
+      - Interfaces: api/tree.md
+      - Utilities: api/libs.md
+      - KDTree: api/kdtree.md
+      - NTree: api/ntree.md
