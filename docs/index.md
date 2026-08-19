@@ -1,11 +1,10 @@
 # KTree
 
-![Python - Version](https://img.shields.io/badge/python-%3E%3D3.10-brightgreen)
-![PyPI - Version](https://img.shields.io/pypi/v/ktree?color=green&label=pip%20install%20ktree)
-![Python - Implementation](https://img.shields.io/pypi/implementation/ktree)
-![PyPI - Wheel](https://img.shields.io/pypi/wheel/ktree)
-![Docs](https://img.shields.io/badge/docs-mkdocs-blue)
-![License](https://img.shields.io/badge/license-0BSD-green)
+![GitHub Release Date](https://img.shields.io/github/release-date/sealtielfreak/ktree.svg?style=flat-square)
+![Python - Version](https://img.shields.io/badge/python-%3E%3D3.10-brightgreen?style=flat-square)
+![PyPI - Version](https://img.shields.io/pypi/v/ktree?style=flat-square)
+![Python - Implementation](https://img.shields.io/pypi/implementation/ktree?style=flat-square)
+![License](https://img.shields.io/badge/license-0BSD-green?style=flat-square)
 
 ## Description
 
