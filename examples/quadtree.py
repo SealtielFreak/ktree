@@ -1,6 +1,6 @@
 from ktree.ntree import NTreeStatic
 
-tree = NTreeStatic([(0., 1.), (0., 1.)], 2)
+tree = NTreeStatic([(0.0, 1.0), (0.0, 1.0)], 2)
 
 tree.insert([0.1, 0.1])
 tree.insert([0.01, 0.2])

@@ -1,13 +1,11 @@
 # KTree
 
-![GitHub Release Date](https://img.shields.io/github/release-date/sealtielfreak/ktree.svg?style=flat-square)
-![Python - Version](https://img.shields.io/badge/python-%3E%3D3.10-brightgreen?style=flat-square)
-![PyPI - Version](https://img.shields.io/pypi/v/ktree?style=flat-square)
-![Python - Implementation](https://img.shields.io/pypi/implementation/ktree?style=flat-square)
-![PyPI - Wheel](https://img.shields.io/pypi/wheel/ktree?style=flat-square)
-![Docs](https://img.shields.io/badge/docs-mkdocs-blue?style=flat-square)
-![License](https://img.shields.io/badge/license-0BSD-green?style=flat-square)
-
+![Python - Version](https://img.shields.io/badge/python-%3E%3D3.10-brightgreen)
+![PyPI - Version](https://img.shields.io/pypi/v/ktree?color=green&label=pip%20install%20ktree)
+![Python - Implementation](https://img.shields.io/pypi/implementation/ktree)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/ktree)
+![Docs](https://img.shields.io/badge/docs-mkdocs-blue)
+![License](https://img.shields.io/badge/license-0BSD-green)
 
 ## Description
 
@@ -18,8 +16,7 @@ smaller nested regions, so that spatially close points end up in the same
 cluster. This hierarchical decomposition is the foundation of many spatial
 data-structure algorithms, including nearest-neighbor search, range queries,
 and collision detection, and it is the pattern first formalized for
-multidimensional data by Bentley
-([1](#references)).
+multidimensional data by Bentley [@bentley-1975].
 
 All containers share a common interface — create the tree, `insert()` points,
 then call `sort()` to partition them into clusters. Each cluster exposes its
@@ -38,9 +35,8 @@ the splitting dimension cycles through the axes in round-robin fashion
 recursion depth at which they were created.
 
 The k-d tree was introduced by Bentley for associative searching in
-multidimensional key spaces ([1](#references)), and its neighborhood-computation
-properties are analyzed in detail by Skrodzki
-([2](#references)).
+multidimensional key spaces [@bentley-1975], and its neighborhood-computation
+properties are analyzed in detail by Skrodzki [@skrodzki-2019].
 
 ### NTreeStatic (NTree)
 
@@ -50,10 +46,10 @@ bounding box is bisected simultaneously at each subdivision step, producing
 `2^N` child regions per parent:
 
 - **2D** — each region is split into 4 quadrants: a **QuadTree**,
-  first described by Finkel and Bentley ([3](#references)).
+  first described by Finkel and Bentley [@finkel-1974].
 - **3D** — each region is split into 8 octants: an **Octree**,
   as used in volumetric and graphics applications
-  ([4](#references), [5](#references)).
+  [@globus-1991; @madeira-2011].
 - **N-D** — the same rule produces `2^N` sub-regions, so the structure works
   for arbitrary dimensionality, not just 2 or 3.
 
@@ -102,82 +98,26 @@ pip install ktree
 pip install git+https://github.com/SealtielFreak/ktree.git
 ```
 
-## Documentation
+## What next?
 
-Full documentation is built with [MkDocs](https://www.mkdocs.org/):
-
-```bash
-uv sync
-uv run mkdocs serve
-```
-
-The docs cover each tree type, the public API, runnable examples, and the
-references behind the data structures (see [`references.bib`](references.bib)).
-
-See [CHANGELOG.md](CHANGELOG.md) for the full version history.
-
-## Testing
-
-The test suite is built with [pytest](https://docs.pytest.org/) and covers every
-class and helper in the package. Running the tests also executes the `>>>`
-examples embedded in the docstrings and prints a coverage report:
-
-```bash
-uv run pytest
-```
-
-Run a single test file:
-
-```bash
-uv run pytest tests/test_ntree.py
-```
+- Read the [Usage guide](usage.md) for a walkthrough of every tree type.
+- Work through the [basic examples](examples/basic.md) and the
+  [advanced examples](examples/advanced.md) for runnable demos.
+- Browse the [API reference](api/tree.md) for module, class, and function
+  documentation.
 
 ## Development
 
-This project uses [uv](https://docs.astral.sh/uv/).
+This project uses [uv](https://docs.astral.sh/uv/):
 
 ```bash
-# Install the project and all dev/docs dependencies
 uv sync
-
-# Lint and format
-uv run ruff check src tests examples
-uv run ruff format src tests examples
-
-# Type-check
+uv run ruff check src examples
 uv run mypy src/
-
-# Run the tests (unit tests, doctests, and coverage report)
-uv run pytest
-
-# Run the bundled examples
-for f in examples/*.py; do uv run python "$f"; done
-
-# Build the package
-uv build
-
-# Build the documentation site
-uv run mkdocs build --strict
+uv run mkdocs serve
 ```
 
 ## License
 
-[KTree](https://github.com/SealtielFreak/ktree) is released under the [BSD Zero Clause (0BSD) license](LICENSE.md).
-
-## References
-
-1. J. L. Bentley, "Multidimensional binary search trees used for associative
-   searching," *Commun. ACM*, vol. 18, no. 9, pp. 509–517, 1975,
-   doi: 10.1145/361002.361007.
-2. M. Skrodzki, "The k-d tree data structure and a proof for neighborhood
-   computation in expected logarithmic time," arXiv:1903.04936, 2019.
-   [Online]. Available: https://arxiv.org/abs/1903.04936v1
-3. R. A. Finkel and J. L. Bentley, "Quad trees: a data structure for retrieval
-   on composite keys," *Acta Inform.*, vol. 4, no. 1, pp. 1–9, 1974,
-   doi: 10.1007/BF00288933.
-4. A. Globus, "OcTree optimization," *Proc. SPIE*, vol. 1459, pp. 2–10, 1991,
-   doi: 10.1117/12.44376.
-5. D. Madeira, A. Montenegro, E. Clua, and T. Lewiner, "GPU octrees and
-   optimized search," in *Proc. VIII Brazilian Symp. Games Digit. Entertain.
-   (SBGames)*, 2011, pp. 2–10. [Online]. Available:
-   http://www.sbgames.org/papers/sbgames09/computing/short/cts19_09.pdf
+KTree is released under the
+[BSD Zero Clause (0BSD) license](https://github.com/SealtielFreak/ktree/blob/main/LICENSE.md).
