@@ -178,6 +178,7 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
 
     def clear(self) -> None:
         """Reset the tree, removing all inserted points and child subtrees."""
+        self.__children = {}
         self.__node = NClusterNode(shape=self.__shape, data=[])
 
     def __insert_recursive(self, verx: list[SupportNumber]) -> NTreeStatic[M]:
@@ -326,6 +327,9 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
         sorted_elements: list = []
 
         self.__children = {}
+        if not self.__data:
+            return sorted_elements
+
         self.__recursive_sorting(sorted_elements)
 
         return sorted_elements
@@ -342,6 +346,7 @@ class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
             inserted data in memory. Call :meth:`sort` to re-partition from
             scratch.
         """
+        self.__children = {}
 
     def __len__(self) -> int:
         return len(self.__data)

@@ -112,6 +112,22 @@ uv run mkdocs serve
 The docs cover each tree type, the public API, runnable examples, and the
 references behind the data structures (see [`references.bib`](references.bib)).
 
+## Testing
+
+The test suite is built with [pytest](https://docs.pytest.org/) and covers every
+class and helper in the package. Running the tests also executes the `>>>`
+examples embedded in the docstrings and prints a coverage report:
+
+```bash
+uv run pytest
+```
+
+Run a single test file:
+
+```bash
+uv run pytest tests/test_ntree.py
+```
+
 ## Development
 
 This project uses [uv](https://docs.astral.sh/uv/).
@@ -121,11 +137,14 @@ This project uses [uv](https://docs.astral.sh/uv/).
 uv sync
 
 # Lint and format
-uv run ruff check src examples
-uv run ruff format src examples
+uv run ruff check src tests examples
+uv run ruff format src tests examples
 
 # Type-check
 uv run mypy src/
+
+# Run the tests (unit tests, doctests, and coverage report)
+uv run pytest
 
 # Run the bundled examples
 for f in examples/*.py; do uv run python "$f"; done
