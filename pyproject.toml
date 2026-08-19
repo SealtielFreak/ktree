@@ -5,7 +5,7 @@ description = "This package provides a hierarchical spatial ordering structure, 
 readme = "README.md"
 requires-python = ">=3.10"
 license = "0BSD"
-license-files = ["LICENSE"]
+license-files = ["LICENSE.md"]
 authors = [
     { name = "SealtielFreak", email = "sealtielfreak@yandex.com" },
 ]
@@ -53,6 +53,7 @@ docs = [
     "mkdocs-material>=9.5",
     "mkdocs-bibtex>=2.16,<3",
     "mkdocstrings[python]>=0.25",
+    "pypandoc-binary>=1.13",
 ]
 
 [tool.uv]

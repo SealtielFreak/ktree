@@ -112,6 +112,8 @@ uv run mkdocs serve
 The docs cover each tree type, the public API, runnable examples, and the
 references behind the data structures (see [`references.bib`](references.bib)).
 
+See [CHANGELOG.md](CHANGELOG.md) for the full version history.
+
 ## Testing
 
 The test suite is built with [pytest](https://docs.pytest.org/) and covers every
@@ -158,22 +160,22 @@ uv run mkdocs build --strict
 
 ## License
 
-[KTree](https://github.com/SealtielFreak/ktree) is released under the [BSD Zero Clause (0BSD) license](LICENSE).
+[KTree](https://github.com/SealtielFreak/ktree) is released under the [BSD Zero Clause (0BSD) license](LICENSE.md).
 
 ## References
 
-1. Jon Louis Bentley. *Multidimensional binary search trees used for
-   associative searching*. Communications of the ACM 18(9): 509–517, 1975.
-   <https://doi.org/10.1145/361002.361007>
-2. Martin Skrodzki. *The k-d tree data structure and a proof for neighborhood
-   computation in expected logarithmic time*. 2019.
-   <https://arxiv.org/abs/1903.04936v1>
-3. Raphael A. Finkel and Jon Louis Bentley. *Quad trees: a data structure for
-   retrieval on composite keys*. Acta Informatica 4(1): 1–9, 1974.
-   <https://doi.org/10.1007/BF00288933>
-4. Al Globus. *OcTree Optimization*. Proceedings of SPIE 1459: 2–10, 1991.
-   <https://doi.org/10.1117/12.44376>
-5. Daniel Madeira, Anselmo Montenegro, Esteban Clua, and Thomas Lewiner.
-   *GPU octrees and optimized search*. VIII Brazilian Symposium on Games and
-   Digital Entertainment, 2011.
-   <http://www.sbgames.org/papers/sbgames09/computing/short/cts19_09.pdf>
+1. J. L. Bentley, "Multidimensional binary search trees used for associative
+   searching," *Commun. ACM*, vol. 18, no. 9, pp. 509–517, 1975,
+   doi: 10.1145/361002.361007.
+2. M. Skrodzki, "The k-d tree data structure and a proof for neighborhood
+   computation in expected logarithmic time," arXiv:1903.04936, 2019.
+   [Online]. Available: https://arxiv.org/abs/1903.04936v1
+3. R. A. Finkel and J. L. Bentley, "Quad trees: a data structure for retrieval
+   on composite keys," *Acta Inform.*, vol. 4, no. 1, pp. 1–9, 1974,
+   doi: 10.1007/BF00288933.
+4. A. Globus, "OcTree optimization," *Proc. SPIE*, vol. 1459, pp. 2–10, 1991,
+   doi: 10.1117/12.44376.
+5. D. Madeira, A. Montenegro, E. Clua, and T. Lewiner, "GPU octrees and
+   optimized search," in *Proc. VIII Brazilian Symp. Games Digit. Entertain.
+   (SBGames)*, 2011, pp. 2–10. [Online]. Available:
+   http://www.sbgames.org/papers/sbgames09/computing/short/cts19_09.pdf

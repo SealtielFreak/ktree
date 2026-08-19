@@ -29,6 +29,7 @@ plugins:
   - search
   - bibtex:
       bib_file: "references.bib"
+      csl_file: "ieee.csl"
   - mkdocstrings:
       handlers:
         python:
@@ -43,6 +44,9 @@ plugins:
 nav:
   - Home: index.md
   - Usage: usage.md
+  - Examples:
+      - Basic: examples/basic.md
+      - Advanced: examples/advanced.md
   - API Reference:
       - Interfaces: api/tree.md
       - Utilities: api/libs.md
