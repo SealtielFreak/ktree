@@ -82,8 +82,17 @@ class KDCluster(ClusterInterface, typing.Generic[SupportNumber]):
 class KDTree(TreeContainerInterface, typing.Generic[SupportNumber]):
     """Recursive axis-aligned K-dimensional tree.
 
-    Points are inserted and later partitioned by calling :meth:`sort`. The
-    splitting dimension cycles through each axis at every recursion level.
+    A KDTree performs a binary, axis-aligned partition of the search space. At
+    each recursion level the current bounding box is split along a single axis
+    at the midpoint of that axis' interval, and the splitting dimension cycles
+    through the axes in round-robin fashion (dimension ``depth mod K``). Every
+    visited region is emitted as a :class:`KDCluster`, so the output of
+    :meth:`sort` is a sequence of clusters ordered by the recursion depth at
+    which they were created.
+
+    The k-d tree was introduced by Bentley for associative searching in
+    multidimensional key spaces (Bentley, 1975); see also Skrodzki (2019) for
+    an analysis of neighborhood-computation properties.
 
     Example:
         >>> tree = KDTree([(-5, 5), (-5, 5)])

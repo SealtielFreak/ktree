@@ -89,9 +89,21 @@ class NClusterNode(ClusterInterface, typing.Generic[M]):
 class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
     """N-ary tree with a fixed root bounding box.
 
-    This is the right choice when the search space is known in advance. A 2D
-    tree with ``limit_divisions=2`` behaves like a QuadTree; a 3D tree like an
-    Octree.
+    ``NTreeStatic`` is the N-dimensional generalization of the classic quadtree
+    and octree. Instead of splitting a single axis per level, every axis of the
+    current bounding box is bisected simultaneously at each subdivision step,
+    producing ``2^N`` child regions per parent:
+
+    - **2D** — each region is split into 4 quadrants (a QuadTree, Finkel &
+      Bentley, 1974).
+    - **3D** — each region is split into 8 octants (an Octree, Globus, 1991;
+      Madeira et al., 2011).
+    - **N-D** — the same rule produces ``2^N`` sub-regions, so the structure
+      works for arbitrary dimensionality, not just 2 or 3.
+
+    The root bounding box is fixed at construction time and every inserted
+    point must fall inside it. ``limit_divisions`` controls the maximum
+    recursion depth.
 
     Example:
         >>> tree = NTreeStatic([(0.0, 1.0), (0.0, 1.0)], limit_divisions=2)
@@ -226,8 +238,16 @@ class NTreeStatic(TreeContainerInterface, typing.Generic[M]):
 class NTreeDynamic(TreeContainerInterface, typing.Generic[M]):
     """N-ary tree that learns its bounding box from the inserted data.
 
-    Unlike :class:`NTreeStatic`, the root ``shape`` is computed from the minimum
-    and maximum coordinates of all inserted points when :meth:`sort` is called.
+    ``NTreeDynamic`` uses the same N-ary partitioning structure as
+    :class:`NTreeStatic`: every axis of the current bounding box is bisected at
+    each subdivision step, forming ``2^N`` child regions. In 2D it behaves like
+    a QuadTree, in 3D like an Octree, and in general N-D it supports arbitrary
+    dimensionality.
+
+    Unlike :class:`NTreeStatic`, the root ``shape`` is not provided by the
+    caller. Instead, it is computed during :meth:`sort` from the minimum and
+    maximum coordinate values of the inserted points on every axis, which makes
+    the tree self-configuring when the search space is unknown in advance.
 
     Example:
         >>> tree = NTreeDynamic(limit_divisions=2)
