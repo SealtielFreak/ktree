@@ -1,17 +1,18 @@
-import random
-
 import numpy as np
 
 from ktree.ntree import NTreeDynamic
 
 N_DIMENSION = 3
 
+
 def generate_dataset(centers, stds, n_samples=500, ndim=3):
     X = []
     y = []
 
     for i, center in enumerate(centers):
-        cluster = np.random.normal(loc=center, scale=stds[i], size=(n_samples // len(centers), ndim))
+        cluster = np.random.normal(
+            loc=center, scale=stds[i], size=(n_samples // len(centers), ndim)
+        )
         X.append(cluster)
         y.append(np.full(n_samples // len(centers), i))
 
@@ -21,9 +22,7 @@ def generate_dataset(centers, stds, n_samples=500, ndim=3):
 tree = NTreeDynamic(1, limit_size=10)
 
 data, ground_truth = generate_dataset(
-    [[1, 1, 1], [3, 3, 3], [2, 2, 1]],
-    stds=[.5, .5, .5],
-    n_samples=500
+    [[1, 1, 1], [3, 3, 3], [2, 2, 1]], stds=[0.5, 0.5, 0.5], n_samples=500
 )
 
 for a in data:
