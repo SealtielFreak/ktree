@@ -3,6 +3,7 @@
 ![GitHub Release Date](https://img.shields.io/github/release-date/sealtielfreak/ktree.svg?style=flat-square)
 ![Python - Version](https://img.shields.io/badge/python-%3E%3D3.10-brightgreen?style=flat-square)
 ![PyPI - Version](https://img.shields.io/pypi/v/ktree?style=flat-square)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ktree?style=flat-square)
 ![Python - Implementation](https://img.shields.io/pypi/implementation/ktree?style=flat-square)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/ktree?style=flat-square)
 ![Docs](https://img.shields.io/badge/docs-mkdocs-blue?style=flat-square)
