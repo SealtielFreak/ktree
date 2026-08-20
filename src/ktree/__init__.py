@@ -15,7 +15,7 @@ from ktree.kdtree import KDCluster, KDTree
 from ktree.ntree import NClusterNode, NTreeDynamic, NTreeStatic
 from ktree.tree import ClusterInterface, TreeContainerInterface
 
-__VERSION__ = "0.2.1"
+__VERSION__ = "0.2.2"
 
 __all__ = [
     "ClusterInterface",
